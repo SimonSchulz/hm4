@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
-import { postsRepository } from "../../repositories/post.repository";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { mapToPostViewModel } from "../mappers/map-to-post-view-model";
+import {postService} from "../../application/posts.service";
+import {setSortAndPagination} from "../../../core/helpers/set-sort-and-pagination";
+import {mapToPostListModel} from "../mappers/map-to-post-list";
+import {PostQueryInput} from "../../types/post-query.input";
 
-export async function getPostsHandler(req: Request, res: Response) {
+export async function getPostsHandler(req: Request<{}, {}, {}, PostQueryInput>, res: Response) {
   try {
-    const Posts = await postsRepository.findAll();
-    const result = Posts.map(mapToPostViewModel);
+    const query = setSortAndPagination(req.query);
+    const {items, totalCount} = await postService.findMany(query);
+    const result = mapToPostListModel(items,totalCount,query);
     res.send(result);
   } catch (e: unknown) {
     res.sendStatus(HttpStatus.InternalServerError);

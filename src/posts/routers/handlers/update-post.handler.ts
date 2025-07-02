@@ -10,17 +10,6 @@ export async function updatePostHandler(
 ) {
   try {
     const id = req.params.id;
-    const post = await postsRepository.findById(id);
-
-    if (!post) {
-      res
-        .status(HttpStatus.NotFound)
-        .send(
-          createErrorMessages([{ field: "id", message: "Post not found" }]),
-        );
-      return;
-    }
-
     await postsRepository.update(id, req.body);
     res.sendStatus(HttpStatus.NoContent);
   } catch (e: unknown) {

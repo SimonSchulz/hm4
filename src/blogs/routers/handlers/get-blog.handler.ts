@@ -3,11 +3,12 @@ import { blogsRepository } from "../../repositories/blog.repository";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { createErrorMessages } from "../../../core/utils/error.utils";
 import { mapToBlogViewModel } from "../mappers/map-to-blog-view-model";
+import {blogService} from "../../application/blog.service";
 
 export async function getBlogHandler(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    const blog = await blogsRepository.findById(id);
+    const blog = await blogService.findByIdOrFail(id);
     if (!blog) {
       res
         .status(HttpStatus.NotFound)
