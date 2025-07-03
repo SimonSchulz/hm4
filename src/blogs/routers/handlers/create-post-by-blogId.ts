@@ -3,7 +3,7 @@ import {PostInputDto} from "../../../posts/dto/post.input-dto";
 import {postService} from "../../../posts/application/posts.service";
 import {mapToPostViewModel} from "../../../posts/routers/mappers/map-to-post-view-model";
 import {HttpStatus} from "../../../core/types/http-statuses";
-import { ValidationError } from "../../../core/utils/app-response-errors";
+import { NotFoundError, ValidationError } from "../../../core/utils/app-response-errors";
 import { param } from "express-validator";
 import { blogService } from "../../application/blog.service";
 
@@ -16,7 +16,7 @@ export async function createPostByBlogIdHandler(
       const blogId = req.params.blogId;
       let blog = await blogService.findByIdOrFail(blogId);
       if (!blog) {
-        throw new ValidationError('Invalid data');
+        throw new NotFoundError('Blog with blogId not found');
       }
       let post = await postService.createByBlogId(req.body, blogId);
         const postViewModel = mapToPostViewModel(post);
