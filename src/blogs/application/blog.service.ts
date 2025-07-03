@@ -3,6 +3,7 @@ import {blogsRepository} from "../repositories/blog.repository";
 import {WithId} from "mongodb";
 import {BlogQueryInput} from "../types/blog-query.input";
 import {BlogInputDto} from "../dto/blog.input-dto";
+import { NotFoundError } from "../../core/utils/app-response-errors";
 
 export const blogService = {
     async findMany(
@@ -12,7 +13,11 @@ export const blogService = {
     },
 
     async findByIdOrFail(id: string): Promise<WithId<Blog> | null> {
-        return blogsRepository.findByIdOrFail(id);
+      const blog = await blogsRepository.findByIdOrFail(id);
+      if (!blog) {
+        throw new NotFoundError(`Blog with id ${id} not found`);
+      }
+      return blog;
     },
 
     async create(dto: BlogInputDto): Promise<WithId<Blog>> {
