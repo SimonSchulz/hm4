@@ -4,16 +4,16 @@ import {postService} from "../../../posts/application/posts.service";
 import {mapToPostViewModel} from "../../../posts/routers/mappers/map-to-post-view-model";
 import {HttpStatus} from "../../../core/types/http-statuses";
 import { ValidationError } from "../../../core/utils/app-response-errors";
+import { param } from "express-validator";
 
 export async function createPostByBlogIdHandler(
-    req: Request<{}, {
-        blogId: string;
-    }, PostInputDto>,
+    req: Request<{ blogId: string }, {}, PostInputDto>,
     res: Response,
     next: NextFunction
 ) {
     try {
-        const post = await postService.create(req.body);
+      const blogId = req.params.blogId;
+      let post = await postService.createByBlogId(req.body, blogId);
       if (!post) {
         throw new ValidationError('Invalid data');
       }
