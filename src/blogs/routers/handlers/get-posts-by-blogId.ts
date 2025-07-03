@@ -4,6 +4,7 @@ import {postService} from "../../../posts/application/posts.service";
 import {mapToPostListModel} from "../../../posts/routers/mappers/map-to-post-list";
 import {PostQueryInput} from "../../../posts/types/post-query.input";
 import { blogService } from "../../application/blog.service";
+import { HttpStatus } from "../../../core/types/http-statuses";
 
 export async function getPostsByBlogIdHandler(
     req: Request<{ blogId: string }, {}, {}, PostQueryInput>,
@@ -19,7 +20,7 @@ export async function getPostsByBlogIdHandler(
       const { items, totalCount } = await postService.findPostsByBlogId(blogId, query);
       const result = mapToPostListModel(items, totalCount, query);
 
-      res.status(200).send(result);
+      res.status(HttpStatus.Ok).send(result);
     } catch (e: unknown) {
         next(e);
     }
