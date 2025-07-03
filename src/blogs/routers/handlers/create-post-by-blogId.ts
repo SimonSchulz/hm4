@@ -5,6 +5,7 @@ import {mapToPostViewModel} from "../../../posts/routers/mappers/map-to-post-vie
 import {HttpStatus} from "../../../core/types/http-statuses";
 import { ValidationError } from "../../../core/utils/app-response-errors";
 import { param } from "express-validator";
+import { blogService } from "../../application/blog.service";
 
 export async function createPostByBlogIdHandler(
     req: Request<{ blogId: string }, {}, PostInputDto>,
@@ -13,10 +14,11 @@ export async function createPostByBlogIdHandler(
 ) {
     try {
       const blogId = req.params.blogId;
-      let post = await postService.createByBlogId(req.body, blogId);
-      if (!post) {
+      let blog = await blogService.findByIdOrFail(blogId);
+      if (!blog) {
         throw new ValidationError('Invalid data');
       }
+      let post = await postService.createByBlogId(req.body, blogId);
         const postViewModel = mapToPostViewModel(post);
         res.status(HttpStatus.Created).send(postViewModel);
     } catch (e: unknown) {
