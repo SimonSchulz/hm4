@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { PostInputDto } from "../../dto/post.input-dto";
 import { mapToPostViewModel } from "../mappers/map-to-post-view-model";
@@ -7,12 +7,13 @@ import {postService} from "../../application/posts.service";
 export async function createPostHandler(
   req: Request<{}, {}, PostInputDto>,
   res: Response,
+  next: NextFunction
 ) {
   try {
     const post = await postService.create(req.body);
     const postViewModel = mapToPostViewModel(post);
     res.status(HttpStatus.Created).send(postViewModel);
   } catch (e: unknown) {
-    res.sendStatus(HttpStatus.InternalServerError);
+    next(e);
   }
 }

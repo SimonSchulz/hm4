@@ -1,19 +1,23 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { BlogInputDto } from "../../dto/blog.input-dto";
 import { mapToBlogViewModel } from "../mappers/map-to-blog-view-model";
 import {blogService} from "../../application/blog.service";
+import { NotFoundError, ValidationError } from "../../../core/utils/app-response-errors";
 
 export async function createBlogHandler(
   req: Request<{}, {}, BlogInputDto>,
   res: Response,
+  next: NextFunction
 ) {
   try {
     const createdBlog = await blogService.create(req.body);
+    if (!createdBlog) {
+      throw new ValidationError('Invalid data');
+    }
     const blogViewModel = mapToBlogViewModel(createdBlog);
-    console.log(blogViewModel);
     res.status(HttpStatus.Created).send(blogViewModel);
   } catch (e: unknown) {
-    res.sendStatus(HttpStatus.InternalServerError);
+    next(e)
   }
 }
