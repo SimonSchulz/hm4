@@ -21,7 +21,7 @@ const contentValidation = body("content")
   .isLength({ min: 2, max: 1000 })
   .withMessage("Length of content is not correct");
 
-const blogIdValidation = body("blogId")
+export const blogIdValidation = body("blogId")
   .isString()
   .withMessage("blogId should be string");
 const createdAtValidation = body("createdAt").isString();
@@ -30,4 +30,9 @@ export const postInputDtoValidation = [
   contentValidation,
   shortDescriptionValidation,
   blogIdValidation,
+];
+export const postInputDtoWithoutBlogIdValidation = [
+  titleValidation,
+  contentValidation,
+  shortDescriptionValidation,
 ];

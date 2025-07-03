@@ -8,20 +8,40 @@ import {blogInputDtoValidation} from "../validation/blog.input-dto.validation";
 import {deleteBlogHandler} from "./handlers/delete-blog.handler";
 import {updateBlogHandler} from "./handlers/update-blog.handler";
 import {createBlogHandler} from "./handlers/create-blog.handler";
+import {getPostsByBlogIdHandler} from "./handlers/get-posts-by-blogId";
+import {
+    postInputDtoValidation,
+    postInputDtoWithoutBlogIdValidation
+} from "../../posts/validation/post.input-dto.validation";
+import { blogIdValidation } from "../../posts/validation/post.input-dto.validation"
+import {createPostByBlogIdHandler} from "./handlers/create-post-by-blogId";
 
 export const blogsRouter = Router({});
-
+const [b] = postInputDtoValidation;
 blogsRouter
     .get('', getBlogsHandler)
 
-    .get('/:id', idValidation, inputValidationResultMiddleware, getBlogHandler)
-
+    .get('/:id', idValidation,
+        inputValidationResultMiddleware,
+        getBlogHandler
+    )
+    .get('/:blogId/posts',
+        blogIdValidation,
+        getPostsByBlogIdHandler
+    )
     .post(
         '',
         authMiddleware,
         blogInputDtoValidation,
         inputValidationResultMiddleware,
         createBlogHandler,
+    )
+    .post(
+        '/:blogId/posts',
+        authMiddleware,
+        postInputDtoWithoutBlogIdValidation,
+        inputValidationResultMiddleware,
+        createPostByBlogIdHandler,
     )
 
     .put(

@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { blogsRepository } from "../../repositories/blog.repository";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { createErrorMessages } from "../../../core/utils/error.utils";
 import { mapToBlogViewModel } from "../mappers/map-to-blog-view-model";

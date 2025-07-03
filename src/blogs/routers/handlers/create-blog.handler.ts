@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { Blog } from "../../types/blog";
 import { BlogInputDto } from "../../dto/blog.input-dto";
-import { blogsRepository } from "../../repositories/blog.repository";
 import { mapToBlogViewModel } from "../mappers/map-to-blog-view-model";
 import {blogService} from "../../application/blog.service";
 

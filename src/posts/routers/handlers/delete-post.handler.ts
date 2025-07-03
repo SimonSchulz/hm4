@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { createErrorMessages } from "../../../core/utils/error.utils";
-import { postsRepository } from "../../repositories/post.repository";
+import {postService} from "../../application/posts.service";
 
 export async function deletePostHandler(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    await postsRepository.delete(id);
+    await postService.delete(id);
     res.sendStatus(HttpStatus.NoContent);
   } catch (e: unknown) {
     res.sendStatus(HttpStatus.InternalServerError);

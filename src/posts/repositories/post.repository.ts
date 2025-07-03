@@ -2,7 +2,6 @@ import {ObjectId, WithId} from "mongodb";
 import {Post} from "../types/post";
 import {postCollection} from "../../db/mongodb";
 import {PostInputDto} from "../dto/post.input-dto";
-import {PaginationAndSorting} from "../../core/types/pagination-and-sorting";
 import {PostQueryInput} from "../types/post-query.input";
 
 export const postsRepository = {
@@ -31,6 +30,29 @@ export const postsRepository = {
         const totalCount = await postCollection.countDocuments(filter);
 
         return { items, totalCount}
+    },
+    async findPostsByBlogId(blogId: string, queryDto: PostQueryInput): Promise<{ items: WithId<Post>[], totalCount: number }> {
+        const {
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortDirection,
+        } = queryDto;
+
+        const skip = (pageNumber - 1) * pageSize;
+
+        const filter = { blogId };
+
+        const items = await postCollection
+            .find(filter)
+            .sort({ [sortBy]: sortDirection })
+            .skip(skip)
+            .limit(pageSize)
+            .toArray();
+
+        const totalCount = await postCollection.countDocuments(filter);
+
+        return { items, totalCount };
     },
 
     async findByIdOrFail(id: string):  Promise<WithId<Post> | null>  {
